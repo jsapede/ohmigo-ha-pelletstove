@@ -192,6 +192,8 @@ description: ""
 ### ohmigo resistance update script
 we use the mathematical model we built during calibration and introduce an offset correction to manipulate the real tareget temperature of the stove.
 
+*NB : as the hohmigo only accepts integer values on the mqtt command, wee need to multiply by 1000 and round(0) before sending the value*
+
 ```
 alias: update resistance ohmigo
 sequence:
