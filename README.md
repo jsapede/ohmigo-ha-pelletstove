@@ -71,7 +71,6 @@ once the ohmigo is conneced and included in HA, we need to calibrate it to match
 
 ![image](https://github.com/user-attachments/assets/6cd6eb96-2fbc-4df2-883e-dad5ba858cf4)
 
-
 *NOTE : on my stove, only integer values of temperature are reported by the digital input/output. the correct way is to slowly increment/decrement resistor values until a stable temperature level is reached*
 
 once temperature / resistance couples are set on a sufficient temperature range (0-50°C), build an interpolation using linear regression (using excel trend curves for example) :
@@ -79,6 +78,11 @@ once temperature / resistance couples are set on a sufficient temperature range 
 R<sub>ohm</sub> = f (T<sub>°C</sub>) = a * T<sup>2</sup> + b*T + c
 
 with a,b,c constants.
+
+![image](https://github.com/user-attachments/assets/4cf182bc-dc41-41c5-a43f-b2fb4b4336b1)
+
+we then have a simple mathematical model to inject the correct resistance value in the wired sensor according to the temperature we want.
+
 
 # Pellet stove settings
 
