@@ -61,6 +61,9 @@ dont forget :
 -  to wire the 230V Neutral/Line to the dry contact
 -  power supply 5v to the microUSB connector of the ohmigo
 
+![image](https://github.com/user-attachments/assets/f398bff6-7683-4c5c-beab-5917c57262c1)
+
+
 # Calibration
 
 once the ohmigo is conneced and included in HA, we need to calibrate it to match with the original wired sensor. 
