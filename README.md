@@ -7,6 +7,8 @@ the key idea is to send orders to the pellet using the wired temperature sensor 
 
 # Glossary :
 
+- ETC : **E**xternal **T**emperature **C**orrection (°C)
+- ETS : **E**xternal **T**emperature **S**ensor (°C)
 - OTS : **O**hmigo **T**emperature **S**ensor (°C)
 - OTR : **O**hmigo **T**emperature **R**esistance (milliOhms)
 - RTT : **R**eal **T**arget **T**emperature (°C)
@@ -34,21 +36,6 @@ Moreover, my stove has no way to put a wired/wireless command that could be incl
 
 And finally the digital input/output of the stove has only 1°C precision wutch is sometimes limiting.
 
-# Approach
-As there's no other way to communicate with the pellet stove except reverse engineering the electronics, the key idea is to send controled resistance values to the wired sensor throuh a specific equipement.
-
-So said, sending a low resistance value will simulate low temperature (< target + hysteresis) and force the stove to ignite, and sending a high resistance value will simulate high temperature (> target) and the stove will extinct :
-
-- if WTS = 5°C << (STT + SHY) => ignition
-- if WTS = 45°C >> STT => extinction
-
-As a gift, sending corrections to the temperature sensor (WTC +/- x°C) will allow to simulate variations in the target temperature and so allow much more than 3 time-based schedules :
-
--  set STT = 21°C
--  if WTS >= 20°C ohmigo temperature sensor will generate a value OTS = (WTS + WTC) and WTC = 1°C => OTS >= STT => extinction at 20°C instead of 21°C 
-
-from here, as WTS will be replaced by the ohmigo, we will use OTS as the main temperature sensor
-
 # Material
 
 The main equipement needed is a Ohmigo "[Ohm on Wifi](https://www.ohmigo.io/en/product-page/ohmigo-ohm-on-wifi)" witch has a specific firmware version including Homeassistant communication by mqtt. The ohmigo generates a resistive value according to a resistance setting in its UI.
@@ -58,6 +45,23 @@ To create a fallaback on the wired sthermal sensor, we also use a simple [zigbee
 A deported wireless zigbee / bluettooth temperature sensor (i use [xiaomi bluetooth](https://fr.aliexpress.com/item/1005006750142144.html) [converted to zigbee](https://smarthomescene.com/guides/convert-xiaomi-lywsd03mmc-from-bluetooth-to-zigbee/)).
 
 Some additionnal WAGO connectors, 5V USB power supply, wires, and electrician pliers are needed to build and the whole system.
+
+#  Method
+As there's no other way to communicate with the pellet stove except reverse engineering the electronics, the key idea is to send controled resistance values to the wired sensor throuh the ohmigo.
+
+So said, sending a low resistance value will simulate low temperature (< target + hysteresis) and force the stove to ignite, and sending a high resistance value will simulate high temperature (> target) and the stove will extinct :
+
+*NOTE : from here, as WTS will be replaced by the ohmigo, we will use OTS as the main temperature sensor*
+
+- if OTS = 5°C << (STT + SHY) => ignition
+- if OTS = 45°C >> STT => extinction
+
+As a gift, sending corrections (ETC +/- x°C) in addition to en external temperature sensor (ETS) will allow to simulate variations in the target temperature and so allow much more than 3 time-based schedules :
+
+-  set STT = 21°C
+-  if ETS >= 20°C ohmigo temperature sensor will generate a value OTS = (ETS + ETC) and ETC = 1°C => OTS = 21°C >= STT => extinction at 20°C instead of 21°C 
+
+
 
 # Wiring scheme
 On my stove the sensor is wired on 39 and 40 connectors :
