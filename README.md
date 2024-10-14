@@ -52,8 +52,8 @@ so, to get a fallback with the wired sensor in case of problem with the ohmigo :
 
 - put the red wire of the sensor on the NC connector of the dry contact
 - Put the red wire on "Ohm" of the ohmigo on the NO connector of the dry contact
-- Put the red wire from the COM on the dry contact to the motherboard
-- ling all the grounds in the same WAGO connector
+- Put the red wire from the COM on the dry contact to the motherboard of the stove
+- Unify all the grounds in the same WAGO connector to the motherboard of the stove
 
 ![image](https://github.com/user-attachments/assets/b05c7db0-5ced-4cc0-9a97-6215ef23845e)
 
