@@ -37,9 +37,9 @@ And finally the digital input/output of the stove has only 1°C precision wutch 
 # Approach
 As there's no other way to communicate with the pellet stove except reverse engineering the electronics, the key idea is to send controled resistance values to the wired sensor throuh a specific equipement.
 
-So said, sending a low resisance value will simulate low temperature (< target + hysteresis) and force the stove to burn up, sending a high resistor value will simulate high temperature (> target) and the stove will stop burning :
+So said, sending a low resistance value will simulate low temperature (< target + hysteresis) and force the stove to ignite, and sending a high resistance value will simulate high temperature (> target) and the stove will extinct :
 
-- if WTS = 5°C << STT + SHY => ignition
+- if WTS = 5°C << (STT + SHY) => ignition
 - if WTS = 45°C >> STT => extinction
 
 As a gift, sending corrections to the temperature sensor (WTC +/- x°C) will allow to simulate variations in the target temperature and so allow much more than 3 time-based schedules :
