@@ -19,7 +19,8 @@ My pellet stove has only a simple temperature regulation using a target temperat
 
 i.e. when target temperature (STT) is set at 21°C, ignition will start when 20°C is sensed on the wired sensor and will extinct as soon as the target temperature STT is reached (21°C). And so on ... alternating starts and stops :
 
-- when WTS =< STT + SHY => ignition
+- when WTS =< (STT + SHY) => ignition
+- when (STT + SHY) < WTS < STT => heating
 - when WTS >= STT => extinction
 
 My pellet stove has only three settings : 
