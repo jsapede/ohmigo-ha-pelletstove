@@ -44,11 +44,22 @@ On my stove the sensor is wired on 39 and 40 connectors :
 
 ![image](https://github.com/user-attachments/assets/67dea1a8-5cb7-47e1-bbee-338b24855a10)
 
-we assume : 
+from the motherboard we assume : 
 - Grey wire for the "ground"
 - red wire for the R<sub>ohm</sub>
 
+so, to get a fallback with the wired sensor in case of problem with the ohmigo : 
 
+- put the red wire of the sensor on the NC connector of the dry contact
+- Put the red wire on "Ohm" of the ohmigo on the NO connector of the dry contact
+- Put the red wire from the COM on the dry contact to the motherboard
+- ling all the grounds in the same WAGO connector
+
+![image](https://github.com/user-attachments/assets/b05c7db0-5ced-4cc0-9a97-6215ef23845e)
+
+dont forget : 
+-  to wire the 230V Neutral/Line to the dry contact
+-  power supply 5v to the microUSB connector of the ohmigo
 
 # Calibration
 
