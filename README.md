@@ -8,7 +8,7 @@ This repository aims to describe method to implement automation and Homeassistan
 - ETC : **E**xternal **T**emperature **C**orrection (°C)
 - ETS : **E**xternal **T**emperature **S**ensor (°C)
 - OTS : **O**hmigo **T**emperature **S**ensor (°C)
-- OTR : **O**hmigo **T**emperature **R**esistance (milliOhms)
+- OTR : **O**hmigo **R**esistance **S**ensor (milliOhms)
 - RTT : **R**eal **T**arget **T**emperature (°C)
 - SHY : **S**tove (cold) **HY**steresis (°C)
 - STT : **S**tove **T**arget **T**emperature (°C)
@@ -107,9 +107,9 @@ with a,b,c constants.
 
 ![image](https://github.com/user-attachments/assets/4cf182bc-dc41-41c5-a43f-b2fb4b4336b1)
 
-we then have a simple mathematical model to inject the correct resistance value in the wired sensor according to the temperature we want.
+we then have a simple mathematical model to inject the correct resistance (ORS) value in the wired sensor according to the temperature we want to send (OTS).
 
-**IN MY CASE** converting the model to give milliohms to Ohmigo will lead to : OTR = ((0.0179 * OTS<sup>2</sup>) + (6.9597 * OTS) + 813.1) * 1000
+**IN MY CASE** converting the model to give milliohms to Ohmigo will lead to : ORS = ((0.0179 * OTS<sup>2</sup>) + (6.9597 * OTS) + 813.1) * 1000
 
 **YOU WILL HAVE TO ADAPT YOUR FORMULA ACCORDING TO THE RESULTS OF YOUR CALIBRATION**
 
@@ -207,7 +207,7 @@ this fake ignition switch, only change the state of a virtual input boolean : `i
 ### Start and stop scripts
 here we use two extremal values of resistance to force the stove to ignite or to force it to extinct.
 
-Forced ignition : we send 5°C to the stove with OTS (i.e. OTR = 849000 milliohm according to my calibration)
+Forced ignition : we send 5°C to the stove with OTS (i.e. ORS = 849000 milliohm according to my calibration)
 
 this one is **useless at this time**. Will be useful if we want to completely manage the stove from the climate template
 
@@ -221,7 +221,7 @@ sequence:
       payload: "849000"
 description: ""
 ```
-Forced extinction : we send 45°C to the stove with OTS (i.e. OTR =  1161000 milliohms according to my calubration)
+Forced extinction : we send 45°C to the stove with OTS (i.e. ORS =  1161000 milliohms according to my calubration)
 
 ```
 alias: Arret chauffe poele FORCE
@@ -237,9 +237,9 @@ description: ""
 ### Target temperature correction script
 
 ### ohmigo resistance update script
-we use the mathematical model we built during calibration and introduce an offset correction to manipulate the real target temperature of the stove and convert OTS to OTR (resistance in milliohms)
+we use the mathematical model we built during calibration and introduce an offset correction to manipulate the real target temperature of the stove and convert OTS to ORS (resistance in milliohms)
 
-so in my case it will be : **OTR = ((0.0179 * OTS<sup>2</sup>) + (6.9597 * OTS) + 813.1) * 1000**
+so in my case it will be : **ORS = ((0.0179 * OTS<sup>2</sup>) + (6.9597 * OTS) + 813.1) * 1000**
 
 *NB : as the ohmigo only accepts integer values on the mqtt command, we need to multiply by 1000 and round(0) before sending the value*
 
