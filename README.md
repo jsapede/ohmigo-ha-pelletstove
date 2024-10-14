@@ -190,7 +190,7 @@ description: ""
 ### Target temperature correction script
 
 ### ohmigo resistance update script
-we use the mathematical model we built during calibration and introduce an offset correction to manipulate the real tareget temperature of the stove.
+we use the mathematical model we built during calibration and introduce an offset correction to manipulate the real target temperature of the stove.
 
 *NB : as the ohmigo only accepts integer values on the mqtt command, we need to multiply by 1000 and round(0) before sending the value*
 
