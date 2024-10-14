@@ -107,11 +107,20 @@ For example : set a time based schedule from 5:00 to 23:00 with a target a 21°C
 
 The basics will be to construct a climate template to control the stove, and add some light automations and script to gain full control over the stove without making "inception like" control loops.
 
+## Sensors
+
+the room temperature sensor (xiaomi BLE) entity is : `sensor.capteur_salle_a_manger_temperature`
+
+
 ## Helpers
 
 ### fake startup switch / stratup boolean (for future use)
 
 ### climate template / customize
+
+## temperature correction offset
+
+for "on the fly" changing the target temperature we need to implement a correction offset on the room temperature sensor : `input_number.correction_sonde_poele`
 
 ## Scripts 
 
@@ -120,6 +129,24 @@ The basics will be to construct a climate template to control the stove, and add
 ### Target temperature correction script
 
 ### ohmigo resistance update script
+
+```
+alias: update resistance ohmigo
+sequence:
+  - action: mqtt.publish
+    metadata: {}
+    data:
+      retain: false
+      topic: aha/18fe34ed492b/oowifi_resistance/cmd_t
+      payload: >-
+        {{ ((0.0173 * (((states('sensor.capteur_salle_a_manger_temperature') |
+        float) + (states('input_number.correction_sonde_poele') | float) )**2) +
+        6.9597 * ((states('sensor.capteur_salle_a_manger_temperature') | float)
+        + (states('input_number.correction_sonde_poele') | float) )+ 813.1)
+        *1000) | round(0) }}
+      evaluate_payload: false
+description: ""
+```
 
 ## Automations
 
