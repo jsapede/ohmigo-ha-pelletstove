@@ -77,3 +77,27 @@ For example : set a time based schedule from 5:00 to 23:00 with a target a 21°C
 
 
 # Homeassistant
+
+The basics will be to construct a climate template to control the stove, and add some light automations and script to gain full control over the stove without making "inception like" control loops.
+
+## Helpers
+
+### fake startup switch / stratup boolean (for future use)
+
+### climate template / customize
+
+## Scripts 
+
+### Start and stop scripts
+
+### Target temperature correction script
+
+### ohmigo resistance update script
+
+## Automations
+
+## Lovelace Card
+
+
+
+
