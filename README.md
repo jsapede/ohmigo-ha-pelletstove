@@ -158,6 +158,7 @@ description: ""
 ### Target temperature correction script
 
 ### ohmigo resistance update script
+we use the mathematical model we built during calibration and introduce an offset correction to manipulate the real tareget temperature of the stove.
 
 ```
 alias: update resistance ohmigo
