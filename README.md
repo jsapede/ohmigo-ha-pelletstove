@@ -115,6 +115,16 @@ the room temperature sensor (xiaomi BLE) entity is : `sensor.capteur_salle_a_man
 
 ## Helpers
 
+## temperature correction offset
+
+for "on the fly" changing the target temperature we need to implement a correction offset on the room temperature sensor in the form of a "input number" helper : `input_number.correction_sonde_poele`
+
+For example : 
+
+as said, the stove is working with its own target temperature we set a 21°C.
+
+if we want a lower target we have to tell sthe stove that it reaches its own target earlier, so if we want 20°C inbstead of 21°C we have to increase the value of the temperature sensor `sensor.capteur_salle_a_manger_temperature` with an offset `input_number.correction_sonde_poele`witch is set at the difference between the stove target temperature (21°C) and our real own target temperature (20°C)
+
 ### fake startup switch / stratup boolean (for future use)
 
 to build correctly a climate template from the UI and be able to correct its target temperazutres from the UI we need to have a switch that ignite/extinct the stove.
@@ -151,9 +161,7 @@ this fake ignition switch, only change the state of a virtual input boolean : `i
 
 ### climate template / customize
 
-## temperature correction offset
 
-for "on the fly" changing the target temperature we need to implement a correction offset on the room temperature sensor in the form of a "input number" helper : `input_number.correction_sonde_poele`
 
 ## Scripts 
 
