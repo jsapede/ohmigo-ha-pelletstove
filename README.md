@@ -3,12 +3,15 @@ automate pellet stove using ohmigo and **homeassistant**
 
 This repository aims to describe method to implement automation and Homeassistant inclusion of **a pellet stove that has neither native wifi connection, nor dry contact command entrypoint**, but a wired temperature sensor.
 
-the key idea is to send orders to the pellet using the wired temperature sensor (witch is a kty80 in my case), by mimicking its behaviour using a specific device that sends variable resistor values to the stove.
+the key idea is to send orders to the pellet using the wired temperature sensor (WTS - witch is a kty80 in my case), by mimicking its behaviour using a specific device that sends variable resistance values to the stove through the wire.
 
 # Problem description
-My pellet stove has only a simple temperature regulation using a target temperature and a cold hysteresis (witch in my case is set a -1°C). 
+My pellet stove has only a simple temperature regulation using a target temperature (STT) and a cold hysteresis (SHY witch in my case is set a -1°C). 
 
-i.e. when target temperature is set at 21°C, heating will start when 20°C is sensed on the wired sensor and will stop as soon as the target temperature is reached (21°C). And so on ... alternating starts and stops.
+i.e. when target temperature (STT) is set at 21°C, ignition will start when 20°C is sensed on the wired sensor and will extinct as soon as the target temperature STT is reached (21°C). And so on ... alternating starts and stops :
+
+- WTS < STT + SHY => ignition
+- WTS >= STT => extinction
 
 My pellet stove has only three settings : 
 1. forced heat : the previous described cycle will infinitely run
@@ -22,11 +25,17 @@ Moreover, my stove has no way to put a wired/wireless command that could be incl
 And finally the digital input/output of the stove has only 1°C precision wutch is sometimes limiting.
 
 # Approach
-As there's no other way to communicate with the pellet stove except reverse engineering the electronics, the key idea is to send orders to the stove using the wired temperature sensor (witch is a kty80 in my case), by mimicking its behaviour using a speecific device that sends variable ressistor values.
+As there's no other way to communicate with the pellet stove except reverse engineering the electronics, the key idea is to send controled resistance values to the WTS throuh a specific equipement.
 
-So said, sending a low resistor value will simulate low temperature (< target + hysteresis) and force the stove to burn up, sending a high resistor value will simulate high temperature (> target) and the stove will stop burning.
+So said, sending a low resisance value will simulate low temperature (< target + hysteresis) and force the stove to burn up, sending a high resistor value will simulate high temperature (> target) and the stove will stop burning :
 
-As a gift, sending corrections to the temperature sensor ( +/- x°C) will allow to simulate variations in the target temperature and so allow much more than 3 time-based schedules.
+- WTS = 5°C << STT + SHY => ignition
+- WTS = 45°C >> STT => extinction
+
+As a gift, sending corrections to the temperature sensor (WTC +/- x°C) will allow to simulate variations in the target temperature and so allow much more than 3 time-based schedules :
+
+-  STT = 21°C
+-  WTS = 20°C + WTC and WTC = 1°C => extinction at 20°C instead of 21°C 
 
 
 # Material
