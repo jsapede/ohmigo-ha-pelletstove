@@ -63,6 +63,7 @@ dont forget :
 
 ![image](https://github.com/user-attachments/assets/f398bff6-7683-4c5c-beab-5917c57262c1)
 
+# Ohmigo settings
 
 # Calibration
 
@@ -120,11 +121,39 @@ the room temperature sensor (xiaomi BLE) entity is : `sensor.capteur_salle_a_man
 
 ## temperature correction offset
 
-for "on the fly" changing the target temperature we need to implement a correction offset on the room temperature sensor : `input_number.correction_sonde_poele`
+for "on the fly" changing the target temperature we need to implement a correction offset on the room temperature sensor in the form of a "input number" helper : `input_number.correction_sonde_poele`
 
 ## Scripts 
 
 ### Start and stop scripts
+here we use two extremal values of resistance to force the stove to ignite or to force it to extinct.
+
+Forced ignition : we send 5°C to the stove (i.e. 849.000 ohm according to my calibration)
+
+this one is **useless at this time**. Will be useful if we want to completely manage the stove from the climate template
+
+```
+alias: Demarrage chauffe poele FORCEE
+sequence:
+  - action: mqtt.publish
+    metadata: {}
+    data:
+      topic: aha/18fe34ed492b/oowifi_resistance/cmd_t
+      payload: "849000"
+description: ""
+```
+Forced extinction : we send 45°C to the stove (i.e. 1161.000 ohm according to my calubration)
+
+```
+alias: Arret chauffe poele FORCE
+sequence:
+  - action: mqtt.publish
+    metadata: {}
+    data:
+      topic: aha/18fe34ed492b/oowifi_resistance/cmd_t
+      payload: "1161000"
+description: ""
+```
 
 ### Target temperature correction script
 
