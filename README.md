@@ -109,7 +109,9 @@ with a,b,c constants.
 
 we then have a simple mathematical model to inject the correct resistance value in the wired sensor according to the temperature we want.
 
-converting the model to give milliohms to Ohmigo will lead to : OTR = ((0.0179 * OTS<sup>2</sup>) + (6.9597 * OTS) + 813.1) * 1000
+** IN MY CASE** converting the model to give milliohms to Ohmigo will lead to : OTR = ((0.0179 * OTS<sup>2</sup>) + (6.9597 * OTS) + 813.1) * 1000
+
+** YOU WILL HAVE TO ADAPT YOUR FORMULA ACCORDING TO THE RESULTS OF YOUR CALIBRATION**
 
 
 # Pellet stove settings
