@@ -10,7 +10,7 @@ My pellet stove has only a simple temperature regulation using a target temperat
 
 i.e. when target temperature (STT) is set at 21°C, ignition will start when 20°C is sensed on the wired sensor and will extinct as soon as the target temperature STT is reached (21°C). And so on ... alternating starts and stops :
 
-- when WTS < STT + SHY => ignition
+- when WTS =< STT + SHY => ignition
 - when WTS >= STT => extinction
 
 My pellet stove has only three settings : 
@@ -25,7 +25,7 @@ Moreover, my stove has no way to put a wired/wireless command that could be incl
 And finally the digital input/output of the stove has only 1°C precision wutch is sometimes limiting.
 
 # Approach
-As there's no other way to communicate with the pellet stove except reverse engineering the electronics, the key idea is to send controled resistance values to the WTS throuh a specific equipement.
+As there's no other way to communicate with the pellet stove except reverse engineering the electronics, the key idea is to send controled resistance values to the wired sensor throuh a specific equipement.
 
 So said, sending a low resisance value will simulate low temperature (< target + hysteresis) and force the stove to burn up, sending a high resistor value will simulate high temperature (> target) and the stove will stop burning :
 
@@ -35,8 +35,9 @@ So said, sending a low resisance value will simulate low temperature (< target +
 As a gift, sending corrections to the temperature sensor (WTC +/- x°C) will allow to simulate variations in the target temperature and so allow much more than 3 time-based schedules :
 
 -  set STT = 21°C
--  if WTS >= 20°C ohmigo send (WTS + WTC) and WTC = 1°C => (WTS + WTC) >= STT => extinction at 20°C instead of 21°C 
+-  if WTS >= 20°C ohmigo temperature sensor will generate a value OTS = (WTS + WTC) and WTC = 1°C => OTS >= STT => extinction at 20°C instead of 21°C 
 
+from here, as WTS will be replaced by the ohmigo, we will use OTS as the main temperature sensor
 
 # Material
 
@@ -110,7 +111,7 @@ For example : set a time based schedule from 5:00 to 23:00 with a target (STT) a
 
 -  at 5:00 the stove will start to listen to the wired sensor
 -  at 23:00 the stove will stop ignition and stop to listen to the wired sensor
--  between 5:00 and 23:00 when WTS < (STT + SHY) = 20°C, stove will autoignite until reaching STT target (21°C)
+-  between 5:00 and 23:00 when OTS < (STT + SHY) = 20°C, stove will autoignite until reaching OTS >= STT (21°C) and then will autoextinct
 
 
 # Homeassistant
@@ -142,7 +143,7 @@ if we want a lower real target temperzature (RTT) we have to tell sthe stove tha
 
 `input_number.correction_sonde_poele` = (STT - RTT) = 21°C - 20°C = 1°C
 
-ohmigo Temperature value will be : `sensor.capteur_salle_a_manger_temperature` + `input_number.correction_sonde_poele`
+ohmigo Temperature value will be OTS = `sensor.capteur_salle_a_manger_temperature` + `input_number.correction_sonde_poele`
 
 so each time we will change the target temperature on the climate, we will have to change this offset. this is done with an automation and a script described later in ths document.
 
@@ -190,7 +191,7 @@ this fake ignition switch, only change the state of a virtual input boolean : `i
 ### Start and stop scripts
 here we use two extremal values of resistance to force the stove to ignite or to force it to extinct.
 
-Forced ignition : we send 5°C to the stove (i.e. 849.000 ohm according to my calibration)
+Forced ignition : we send 5°C to the stove with OTS (i.e. OTR = 849000 milliohm according to my calibration)
 
 this one is **useless at this time**. Will be useful if we want to completely manage the stove from the climate template
 
@@ -204,7 +205,7 @@ sequence:
       payload: "849000"
 description: ""
 ```
-Forced extinction : we send 45°C to the stove (i.e. 1161.000 ohm according to my calubration)
+Forced extinction : we send 45°C to the stove with OTS (i.e. OTR =  1161000 milliohms according to my calubration)
 
 ```
 alias: Arret chauffe poele FORCE
@@ -220,7 +221,9 @@ description: ""
 ### Target temperature correction script
 
 ### ohmigo resistance update script
-we use the mathematical model we built during calibration and introduce an offset correction to manipulate the real target temperature of the stove.
+we use the mathematical model we built during calibration and introduce an offset correction to manipulate the real target temperature of the stove and convert OTS to OTR (resistance in milliohms)
+
+so in my case it will be : **OTR = ((0.0179 * OTS^2) + (6.9597 * OTS) + 813.1) * 1000**
 
 *NB : as the ohmigo only accepts integer values on the mqtt command, we need to multiply by 1000 and round(0) before sending the value*
 
@@ -246,6 +249,12 @@ description: ""
 
 ## Lovelace Card
 
+# Glossary :
 
+- OTS : **O**hmigo **T**emperature **S**ensor (°C)
+- OTR : **O**hmigo **T**emperature **R**esistance (milliOhms)
+- SHY : **S**tove (cold) **HY**steresis
+- STT : **S**tove **T**arget **T**emperature (°C)
+- WTS : **W**ired **T**emperature **S**ensor (°C)
 
 
