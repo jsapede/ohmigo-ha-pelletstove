@@ -10,7 +10,7 @@ the key idea is to send orders to the pellet using the wired temperature sensor 
 - OTS : **O**hmigo **T**emperature **S**ensor (°C)
 - OTR : **O**hmigo **T**emperature **R**esistance (milliOhms)
 - RTT : **R**eal **T**arget **T**emperature (°C)
-- SHY : **S**tove (cold) **HY**steresis
+- SHY : **S**tove (cold) **HY**steresis (°C)
 - STT : **S**tove **T**arget **T**emperature (°C)
 - WTS : **W**ired **T**emperature **S**ensor (°C)
 
