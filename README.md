@@ -117,6 +117,38 @@ the room temperature sensor (xiaomi BLE) entity is : `sensor.capteur_salle_a_man
 
 ### fake startup switch / stratup boolean (for future use)
 
+to build correctly a climate template from the UI and be able to correct its target temperazutres from the UI we need to have a switch that ignite/extinct the stove.
+
+In reality we only want that the stove regulates itself ignition/extinction so we create a "fake ignition switch" 
+
+```
+####################
+# Poele a granulés #
+####################
+
+switch:
+## Demarrage chauffe thermostat poele a granules / activation switch virtuel
+  - platform: template
+    switches:
+      poele_a_granules_chauffe:
+        unique_id: "switch.poele_a_granules_chauffe"
+        friendly_name: "Poele mode marche CHAUFFE"
+        value_template: "{{ is_state('input_boolean.poele_a_granules_chauffe_virtuel', 'on') }}"
+        turn_on:
+          action: switch.turn_on
+          target:
+            entity_id: input_boolean.poele_a_granules_chauffe_virtuel
+        turn_off:
+          action: switch.turn_off
+          target:
+            entity_id: input_boolean.poele_a_granules_chauffe_virtuel
+```
+
+this fake ignition switch, only change the state of a virtual input boolean : `input_boolean.poele_a_granules_chauffe_virtuel` witch has no impact a this time.
+
+*NB : for future use it wille be possible to add extra automation to force ignit/extinction from this virtual input boolean*
+
+
 ### climate template / customize
 
 ## temperature correction offset
