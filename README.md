@@ -3,8 +3,6 @@ automate pellet stove using ohmigo and **homeassistant**
 
 This repository aims to describe method to implement automation and Homeassistant inclusion of **a pellet stove that has neither native wifi connection, nor dry contact command entrypoint**, but a wired temperature sensor.
 
-the key idea is to send orders to the pellet using the wired temperature sensor (WTS - witch is a kty80 in my case), by mimicking its behaviour using a specific device that sends variable resistance values to the stove through the wire.
-
 # Glossary :
 
 - ETC : **E**xternal **T**emperature **C**orrection (°C)
