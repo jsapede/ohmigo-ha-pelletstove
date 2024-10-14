@@ -137,13 +137,13 @@ the external temperature sensor (ETS) entity is : `sensor.capteur_salle_a_manger
 
 ## Helpers
 
-## Target temperature of the stove
+### Target temperature of the stove
 
 to facilitate modifications we introduce in HA an input number that is equalt to the STT target temperature of the stove (i.e. 21°C in our example) : 
 
 so if we decide to change the basic setting of the stove we only have this value to change manually for everything continue to works normally.
 
-## temperature correction offset
+### temperature correction offset
 
 for "on the fly" changing the target temperature we need to implement a correction offset on the room temperature sensor (we earlier named WTC) in the form of a "input number" helper : `input_number.correction_sonde_poele`
 
