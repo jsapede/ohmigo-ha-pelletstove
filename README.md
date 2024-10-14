@@ -10,8 +10,8 @@ My pellet stove has only a simple temperature regulation using a target temperat
 
 i.e. when target temperature (STT) is set at 21°C, ignition will start when 20°C is sensed on the wired sensor and will extinct as soon as the target temperature STT is reached (21°C). And so on ... alternating starts and stops :
 
-- WTS < STT + SHY => ignition
-- WTS >= STT => extinction
+- when WTS < STT + SHY => ignition
+- when WTS >= STT => extinction
 
 My pellet stove has only three settings : 
 1. forced heat : the previous described cycle will infinitely run
@@ -29,20 +29,20 @@ As there's no other way to communicate with the pellet stove except reverse engi
 
 So said, sending a low resisance value will simulate low temperature (< target + hysteresis) and force the stove to burn up, sending a high resistor value will simulate high temperature (> target) and the stove will stop burning :
 
-- WTS = 5°C << STT + SHY => ignition
-- WTS = 45°C >> STT => extinction
+- if WTS = 5°C << STT + SHY => ignition
+- if WTS = 45°C >> STT => extinction
 
 As a gift, sending corrections to the temperature sensor (WTC +/- x°C) will allow to simulate variations in the target temperature and so allow much more than 3 time-based schedules :
 
--  STT = 21°C
--  WTS = 20°C + WTC and WTC = 1°C => extinction at 20°C instead of 21°C 
+-  set STT = 21°C
+-  if WTS >= 20°C ohmigo send (WTS + WTC) and WTC = 1°C => (WTS + WTC) >= STT => extinction at 20°C instead of 21°C 
 
 
 # Material
 
-The main equipement needed is a Ohmigo "[Ohm on Wifi](https://www.ohmigo.io/en/product-page/ohmigo-ohm-on-wifi)" witch has a specific firmware version including Homeassistant communication by mqtt.
+The main equipement needed is a Ohmigo "[Ohm on Wifi](https://www.ohmigo.io/en/product-page/ohmigo-ohm-on-wifi)" witch has a specific firmware version including Homeassistant communication by mqtt. The ohmigo generates a resistive value according to a resistance setting in its UI.
 
-To create a fallaback on the wired sthermal sensor, we also use a simple [zigbee dry-contact with a NC/NO wiring](https://fr.aliexpress.com/item/1005005800957363.html).
+To create a fallaback on the wired sthermal sensor, we also use a simple [zigbee dry-contact with a NC/NO wiring](https://fr.aliexpress.com/item/1005005800957363.html). In some cas we will want to go back to the original wired sensor.
 
 A deported wireless zigbee / bluettooth temperature sensor (i use [xiaomi bluetooth](https://fr.aliexpress.com/item/1005006750142144.html) [converted to zigbee](https://smarthomescene.com/guides/convert-xiaomi-lywsd03mmc-from-bluetooth-to-zigbee/)).
 
@@ -106,11 +106,11 @@ The pellet stove is maintained in **"Programmed Mode"** over an extended range o
 - to allow start / stop control using extreme resistor values injected in the sensor
 
 
-For example : set a time based schedule from 5:00 to 23:00 with a target a 21°C :
+For example : set a time based schedule from 5:00 to 23:00 with a target (STT) at 21°C + cold hysteresis (SHY) at (-1°C)
 
 -  at 5:00 the stove will start to listen to the wired sensor
--  at 23:00 the stove will stop burning and stop to listen to the wired sensor
--  between 5:00 and 23:00 when temperature will reach Target + hysteresis : 21°C + (-1°C) = 20°C, stove will autostart burning until reaching target (21°C)
+-  at 23:00 the stove will stop ignition and stop to listen to the wired sensor
+-  between 5:00 and 23:00 when WTS < (STT + SHY) = 20°C, stove will autoignite until reaching STT target (21°C)
 
 
 # Homeassistant
@@ -126,23 +126,25 @@ the room temperature sensor (xiaomi BLE) entity is : `sensor.capteur_salle_a_man
 
 ## Target temperature of the stove
 
-to facilitate modifications we introduce in HA an input number that is equalt to the target temperature of the stove (i.e. 21°C in our example) : 
+to facilitate modifications we introduce in HA an input number that is equalt to the STT target temperature of the stove (i.e. 21°C in our example) : 
 
 so if we decide to change the basic setting of the stove we only have this value to change manually for everything continue to works normally.
 
 ## temperature correction offset
 
-for "on the fly" changing the target temperature we need to implement a correction offset on the room temperature sensor in the form of a "input number" helper : `input_number.correction_sonde_poele`
+for "on the fly" changing the target temperature we need to implement a correction offset on the room temperature sensor (we earlier named WTC) in the form of a "input number" helper : `input_number.correction_sonde_poele`
 
 For example : 
 
-as said, the stove is working with its own target temperature we set a 21°C.
+as said, the stove is working with its own target temperature we set a 21°C : 
 
-if we want a lower target we have to tell sthe stove that it reaches its own target earlier, so if we want 20°C inbstead of 21°C we have to increase the value of the temperature sensor `sensor.capteur_salle_a_manger_temperature` with an offset `input_number.correction_sonde_poele`witch is set at the difference between the stove target temperature (21°C) and our real own target temperature (20°C)
+if we want a lower real target temperzature (RTT) we have to tell sthe stove that it reaches its own target earlier, so if we want 20°C instead of 21°C we have to increase the value of the temperature sensor `sensor.capteur_salle_a_manger_temperature` with an offset `input_number.correction_sonde_poele`witch is set at the difference between the stove target temperature (21°C) and our real own target temperature (20°C) :
+
+`input_number.correction_sonde_poele` = (STT - RTT) = 21°C - 20°C = 1°C
+
+ohmigo Temperature value will be : `sensor.capteur_salle_a_manger_temperature` + `input_number.correction_sonde_poele`
 
 so each time we will change the target temperature on the climate, we will have to change this offset. this is done with an automation and a script described later in ths document.
-
-
 
 
 ### fake startup switch / stratup boolean (for future use)
