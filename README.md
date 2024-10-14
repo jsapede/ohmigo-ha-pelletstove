@@ -5,6 +5,15 @@ This repository aims to describe method to implement automation and Homeassistan
 
 the key idea is to send orders to the pellet using the wired temperature sensor (WTS - witch is a kty80 in my case), by mimicking its behaviour using a specific device that sends variable resistance values to the stove through the wire.
 
+# Glossary :
+
+- OTS : **O**hmigo **T**emperature **S**ensor (°C)
+- OTR : **O**hmigo **T**emperature **R**esistance (milliOhms)
+- RTT : **R**eal **T**arget **T**emperature (°C)
+- SHY : **S**tove (cold) **HY**steresis
+- STT : **S**tove **T**arget **T**emperature (°C)
+- WTS : **W**ired **T**emperature **S**ensor (°C)
+
 # Problem description
 My pellet stove has only a simple temperature regulation using a target temperature (STT) and a cold hysteresis (SHY witch in my case is set a -1°C). 
 
@@ -249,13 +258,5 @@ description: ""
 
 ## Lovelace Card
 
-# Glossary :
-
-- OTS : **O**hmigo **T**emperature **S**ensor (°C)
-- OTR : **O**hmigo **T**emperature **R**esistance (milliOhms)
-- RTT : **R**eal **T**arget **T**emperature (°C)
-- SHY : **S**tove (cold) **HY**steresis
-- STT : **S**tove **T**arget **T**emperature (°C)
-- WTS : **W**ired **T**emperature **S**ensor (°C)
 
 
