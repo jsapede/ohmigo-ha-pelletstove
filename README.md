@@ -115,6 +115,12 @@ the room temperature sensor (xiaomi BLE) entity is : `sensor.capteur_salle_a_man
 
 ## Helpers
 
+## Target temperature of the stove
+
+to facilitate modifications we introduce in HA an input number that is equalt to the target temperature of the stove (i.e. 21°C in our example) : 
+
+so if we decide to change the basic setting of the stove we only have this value to change manually for everything continue to works normally.
+
 ## temperature correction offset
 
 for "on the fly" changing the target temperature we need to implement a correction offset on the room temperature sensor in the form of a "input number" helper : `input_number.correction_sonde_poele`
@@ -124,6 +130,11 @@ For example :
 as said, the stove is working with its own target temperature we set a 21°C.
 
 if we want a lower target we have to tell sthe stove that it reaches its own target earlier, so if we want 20°C inbstead of 21°C we have to increase the value of the temperature sensor `sensor.capteur_salle_a_manger_temperature` with an offset `input_number.correction_sonde_poele`witch is set at the difference between the stove target temperature (21°C) and our real own target temperature (20°C)
+
+so each time we will change the target temperature on the climate, we will have to change this offset. this is done with an automation and a script described later in ths document.
+
+
+
 
 ### fake startup switch / stratup boolean (for future use)
 
