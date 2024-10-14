@@ -101,13 +101,15 @@ once the ohmigo is conneced and included in HA, we need to calibrate it to match
 
 once temperature / resistance couples are set on a sufficient temperature range (0-50°C), build an interpolation using linear regression (using excel trend curves for example) :
 
-R<sub>ohm</sub> = f (T<sub>°C</sub>) = a * T<sup>2</sup> + b*T + c
+R<sub>ohm</sub> = f (T<sub>°C</sub>) = a * T<sup>2</sup> + b * T + c
 
 with a,b,c constants.
 
 ![image](https://github.com/user-attachments/assets/4cf182bc-dc41-41c5-a43f-b2fb4b4336b1)
 
 we then have a simple mathematical model to inject the correct resistance value in the wired sensor according to the temperature we want.
+
+converting the model to give milliohms to Ohmigo will lead to : OTR = ((0.0179 * OTS<sup>2</sup>) + (6.9597 * OTS) + 813.1) * 1000
 
 
 # Pellet stove settings
@@ -235,7 +237,7 @@ description: ""
 ### ohmigo resistance update script
 we use the mathematical model we built during calibration and introduce an offset correction to manipulate the real target temperature of the stove and convert OTS to OTR (resistance in milliohms)
 
-so in my case it will be : **OTR = ((0.0179 * OTS^2) + (6.9597 * OTS) + 813.1) * 1000**
+so in my case it will be : **OTR = ((0.0179 * OTS<sup>2</sup>) + (6.9597 * OTS) + 813.1) * 1000**
 
 *NB : as the ohmigo only accepts integer values on the mqtt command, we need to multiply by 1000 and round(0) before sending the value*
 
