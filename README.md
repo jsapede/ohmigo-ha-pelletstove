@@ -40,6 +40,15 @@ A deported wireless zigbee / bluettooth temperature sensor (i use [xiaomi blueto
 Some additionnal WAGO connectors, 5V USB power supply, wires, and electrician pliers are needed to build and the whole system.
 
 # Wiring scheme
+On my stove the sensor is wired on 39 and 40 connectors :
+
+![image](https://github.com/user-attachments/assets/67dea1a8-5cb7-47e1-bbee-338b24855a10)
+
+we assume : 
+- Grey wire for the "ground"
+- red wire for the R<sub>ohm</sub>
+
+
 
 # Calibration
 
