@@ -132,7 +132,7 @@ The basics will be to construct a climate template to control the stove, and add
 
 ## Sensors
 
-the room temperature sensor (xiaomi BLE) entity is : `sensor.capteur_salle_a_manger_temperature`
+the external temperature sensor (ETS) entity is : `sensor.capteur_salle_a_manger_temperature`
 
 
 ## Helpers
