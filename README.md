@@ -104,6 +104,8 @@ Once setup, you'il be able to see it in HA :
 
 ![image](https://github.com/user-attachments/assets/49bb2e49-f27e-4d16-ac03-8fdafc0239ba)
 
+*NOTE : As we use "Resistance Mode" temperature change on the UI has no effect on the ohmigo*
+
 and with MQTTExplorer : 
 
 ![image](https://github.com/user-attachments/assets/39b4a976-554f-4f2c-baaa-b59fc6ddb2bf)
