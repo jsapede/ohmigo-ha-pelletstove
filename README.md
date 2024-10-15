@@ -205,7 +205,7 @@ if we want a lower real target temperature (RTT) we have to tell sthe stove that
 
 `input_number.ETC` = (STT - RTT) = (21°C - 20°C) = 1°C
 
-ohmigo Temperature value will be OTI = `sensor.ETS` + `input_number.ETC`
+ohmigo Temperature value will be OTI = `sensor.ETS` + `input_number.etc`
 
 so each time we will change the target temperature on the climate, we will have to change this offset. this is done with an automation and a script described later in ths document.
 
@@ -272,7 +272,7 @@ homeassistant:
 ### Start and stop scripts
 here we use two extremal values of resistance to force the stove to ignite or to force it to extinct.
 
-Forced ignition : we send 5°C to the stove with OTS (i.e. ORS = 849000 milliohm according to my calibration)
+Forced ignition : we send OTI = 5°C to the stove (i.e. ORI = 849000 milliohm according to my calibration)
 
 this one is **useless at this time**. Will be useful if we want to completely manage the stove from the climate template
 
@@ -286,7 +286,7 @@ sequence:
       payload: "849000"
 description: ""
 ```
-Forced extinction : we send 45°C to the stove with OTS (i.e. ORS =  1161000 milliohms according to my calubration)
+Forced extinction : we send OTI = 45°C to the stove (i.e. ORI =  1161000 milliohms according to my calubration)
 
 ```
 alias: Arret chauffe poele FORCE
@@ -304,7 +304,9 @@ description: ""
 ### ohmigo resistance update script
 we use the mathematical model we built during calibration and introduce an offset correction to manipulate the real target temperature of the stove and convert OTS to ORS (resistance in milliohms)
 
-so in my case it will be : **ORS = ((0.0179 * OTS<sup>2</sup>) + (6.9597 * OTS) + 813.1) * 1000**
+so in my case it will be : **ORI = ((0.0179 * OTI<sup>2</sup>) + (6.9597 * OTI) + 813.1) * 1000**
+
+with OTI = `sensor.ets + input_number.etc`
 
 *NB : as the ohmigo only accepts integer values on the mqtt command, we need to multiply by 1000 and round(0) before sending the value*
 
