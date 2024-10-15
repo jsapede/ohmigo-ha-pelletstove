@@ -55,8 +55,8 @@ As a gift, the Ohmigo control will allow us to relay external temperature sensor
 
 For example :
 -  on the stove we set STT = 21°C as a basis
--  if ETS >= 20°C ohmigo will generate a fake temperature including the desired correction OTI = (ETS + ETC) with, for example, ETC = 1°C. So we will have OTI = 21°C >= STT. Shis will lead to control over extinction at 20°C instead of 21°C of the STT
--  ETC qill be the difference between the Real Target Temperature (RTT) and the internal Stove Target Temperature (STT) 
+-  if ETS >= 20°C ohmigo will generate a fake temperature including the desired correction OTI = (ETS + ETC) with, for example, ETC = 1°C. So we will have OTI = 21°C >= STT. This will lead to start extinction at real target temperature (RTT) 20°C instead of 21°C of the STT
+-  ETC will be the difference between the Real Target Temperature (RTT) and the internal Stove Target Temperature (STT) 
 
 ![image](https://github.com/user-attachments/assets/d0bda2c6-aef3-433a-8696-2a9d4fa516ec)
 
