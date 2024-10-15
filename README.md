@@ -277,7 +277,7 @@ Forced ignition : we send OTI = 5°C to the stove (i.e. ORI = 849000 milliohm ac
 this one is **useless at this time**. Will be useful if we want to completely manage the stove from the climate template
 
 ```
-alias: Demarrage chauffe poele FORCEE
+alias: Stove Ignition
 sequence:
   - action: mqtt.publish
     metadata: {}
@@ -289,7 +289,7 @@ description: ""
 Forced extinction : we send OTI = 45°C to the stove (i.e. ORI =  1161000 milliohms according to my calubration)
 
 ```
-alias: Arret chauffe poele FORCE
+alias: Stove Extinction
 sequence:
   - action: mqtt.publish
     metadata: {}
@@ -342,6 +342,183 @@ description: ""
 ```
 
 ## Automations
+
+### update ORI 
+
+here we update the Ohmigo resistance value (ORI) each time the external temperature sensor (ETS) value changes :
+
+```
+alias: update ohmigo resistance
+description: ""
+triggers:
+  - trigger: state
+    entity_id:
+      - sensor.ets
+conditions: []
+actions:
+  - action: script.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+        - script.update_resistance_ohmigo
+mode: single
+```
+
+### Coupling stove extinction with thermostat 
+
+here we establisg coupling between thermostate settings and the stove control :
+
+- When Thermostat is set to OFF : Set OTI to 45°C to force stove stop + deactivate ORI update to avoid restarts + stop the scheduler
+- when thermostat is send to "HEAT" :  activate ORI update + force ORI update
+
+```
+alias: Gestion Thermostat Poele
+description: ""
+triggers:
+  - alias: Démarrage thermostat
+    trigger: state
+    entity_id:
+      - climate.stove
+    from: "off"
+    to: heat
+    id: demarrage thermostat
+  - alias: arret thermostat
+    trigger: state
+    entity_id:
+      - climate.stove
+    from: heat
+    to: "off"
+    id: arret thermostat
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - arret thermostat
+        sequence:
+          - action: automation.turn_off
+            data:
+              stop_actions: true
+            target:
+              entity_id: automation.update_ohmigo_resistance
+          - action: script.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: script.stove_extinction
+          - action: switch.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id: switch.schedule_temperature_calendar
+      - conditions:
+          - condition: trigger
+            id:
+              - demarrage thermostat
+        sequence:
+          - action: automation.turn_on
+            data: {}
+            target:
+              entity_id: automation.update_ohmigo_resistance
+          - action: automation.trigger
+            target:
+              entity_id: automation.update_ohmigo_resistance
+            data:
+              skip_condition: true
+mode: single
+```
+
+## Update Temperature correction (ETC)
+
+here we adjust the temperature correction each time the temperature target is set on the thermostat **in heating mode**
+
+when the thermostat is in "OFF" Mode, ETC update is bypassed to avoid unwanted ignitions
+
+
+```
+alias: ETC update
+description: ""
+triggers:
+  - trigger: state
+    entity_id:
+      - climate.stove
+    attribute: temperature
+conditions: []
+actions:
+  - action: script.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: script.etc_update
+  - if:
+      - condition: state
+        entity_id: climate.stove
+        state: heat
+    then:
+      - action: script.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+            - script.update_resistance_ohmigo
+mode: single
+
+```
+## Automatic WTS fallback
+
+This automation is not necessary but given as example.
+
+the dry contact switch entity is : `input_boolean.etat_ohmigo`
+
+```
+alias: fallback sonde poele
+description: ""
+triggers:
+  - trigger: mqtt
+    topic: aha/18fe34ed492b/avty_t
+    payload: offline
+    alias: déconnexion ohmigo
+    id: déconnexion ohmigo
+  - alias: reconnexion ohmigo
+    trigger: mqtt
+    topic: aha/18fe34ed492b/avty_t
+    payload: online
+    id: reconnexion ohmigo
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - déconnexion ohmigo
+        sequence:
+          - action: input_boolean.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id: input_boolean.etat_ohmigo
+        alias: ohmigo déconnecté
+      - conditions:
+          - condition: trigger
+            id:
+              - reconnexion ohmigo
+        sequence:
+          - if:
+              - condition: state
+                entity_id: input_boolean.etat_ohmigo
+                state: "off"
+            then:
+              - action: input_boolean.turn_on
+                metadata: {}
+                data: {}
+                target:
+                  entity_id: input_boolean.etat_ohmigo
+        alias: ohmigo reconnecté
+mode: single
+
+```
 
 ## Lovelace Card
 
