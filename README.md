@@ -117,7 +117,7 @@ refering to the MQTTExplorer screenshot above, sending new resistance values to 
 
 **This command MUST be fed with milliohms values, with integer precision. Ohmigo will convert them into ohm values with 3 digits precition as seen on the state topic (aha/18fe34ed492b/oowifi_resistance/stat_t)**
 
-# Calibration
+## Calibration
 
 Once the ohmigo is conneced and included in HA, we need to calibrate it to match with the original wired sensor : 
 
