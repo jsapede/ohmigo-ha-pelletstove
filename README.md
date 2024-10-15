@@ -107,6 +107,13 @@ and with MQTTExplorer :
 ![image](https://github.com/user-attachments/assets/9e78f745-6933-498e-9321-ebee3288dcc8)
 
 ## Control
+Ohmigo can be manually controlled via the input number on the mqtt integration and throuh the input entity created by the mqtt connection
+
+**However, for the rest of this tutorial, we will directly use mqtt commands**
+
+refering to the MQTTExplorer screenshot above, sending new resistance values to the ohmigo (ORI) to delude the stove will be done using the MQTT topic : **aha/18fe34ed492b/oowifi_resistance/cmd_t**
+
+**This command MUST be fed with milliohms values, with integer precision. Ohmigo will convert them into ohm values with 3 digits precition as seen on the state topic (aha/18fe34ed492b/oowifi_resistance/stat_t)**
 
 # Calibration
 
