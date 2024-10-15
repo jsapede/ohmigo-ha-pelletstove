@@ -1,5 +1,4 @@
 # ohmigo-ha-pelletstove
-automate pellet stove using ohmigo and **homeassistant**
 
 This repository aims to describe method to implement automation and Homeassistant inclusion of **a pellet stove that neither has native wifi connection, nor dry contact command entrypoint**, but a only Wired Temperature Input (WTI).
 
@@ -30,7 +29,7 @@ My pellet stove has only three settings :
 
 # Material
 
-The main equipement needed is a Ohmigo "[Ohm on Wifi](https://www.ohmigo.io/en/product-page/ohmigo-ohm-on-wifi)" witch has a specific firmware version including Homeassistant communication by mqtt. The ohmigo generates a resistive value according to a resistance setting in its UI. Ohmigo will replace the WTI.
+The main equipement needed is a Ohmigo "[Ohm on Wifi](https://www.ohmigo.io/en/product-page/ohmigo-ohm-on-wifi)" witch has a specific firmware version including Homeassistant communication by MQTT. The ohmigo generates a resistive value according to a resistance setting in its UI. Ohmigo will replace the WTI.
 
 A deported wireless zigbee / bluettooth temperature sensor (i use [xiaomi bluetooth](https://fr.aliexpress.com/item/1005006750142144.html) [converted to zigbee](https://smarthomescene.com/guides/convert-xiaomi-lywsd03mmc-from-bluetooth-to-zigbee/)) will act as the External Temperature Sensor (ETS)
 
@@ -39,13 +38,13 @@ To create a fallaback on the wired sthermal sensor, we also use a simple [zigbee
 Some additionnal WAGO connectors, 5V USB power supply, wires, and electrician pliers are needed to build and the whole system.
 
 #  Method
-As there's no other way to communicate with the pellet stove except reverse engineering the electronics, the key idea is to delude the stove with fake temperarature inputs (OTI) send by variating the resistance of the Ohmigo to send send controled resistance inputs (ORI) to the stove
+As there's no other way to communicate with the pellet stove except reverse engineering the electronics, the key idea is to delude the stove with fake temperarature inputs (OTI) sent by variating the resistance of the Ohmigo and so, to send controled resistance inputs (ORI) to the stove
 
-So said, sending a low resistance value will simulate low temperature (< target + hysteresis) and force the stove to ignite, and sending a high resistance value will simulate high temperature (> target) and the stove will extinct.
+So said, sending a low resistance value will simulate low temperature (<= target + hysteresis) and force the stove to ignite, and sending a high resistance value will simulate high temperature (>= target) and the stove will extinct.
 
 The main objective is to replace WTS by a controlled input value issuing from the ohmigo (ORI).
 
-*NOTE : as we will replace the WTI by the ohmuigo, from here we will use OTI as the main temperature input for the stove*
+*NOTE : as we will replace the WTI by the ohuigo, from here we will use OTI as the main temperature input for the stove*
 
 - if OTI = 5°C << (STT + SHY) : ignition
 - if OTI = 45°C >> STT : extinction
@@ -56,7 +55,8 @@ As a gift, the Ohmigo control will allow us to relay external temperature sensor
 
 For example :
 -  on the stove we set STT = 21°C as a basis
--  if ETS >= 20°C ohmigo will generate a fake temperature including the desired correction OTI = (ETS + ETC) with, for example, ETC = 1°C. So we will have OTI = 21°C >= STT. Shis will lead to control over extinction at 20°C instead of 21°C of the STT 
+-  if ETS >= 20°C ohmigo will generate a fake temperature including the desired correction OTI = (ETS + ETC) with, for example, ETC = 1°C. So we will have OTI = 21°C >= STT. Shis will lead to control over extinction at 20°C instead of 21°C of the STT
+-  ETC qill be the difference between the Real Target Temperature (RTT) and the internal Stove Target Temperature (STT) 
 
 ![image](https://github.com/user-attachments/assets/d0bda2c6-aef3-433a-8696-2a9d4fa516ec)
 
@@ -90,7 +90,7 @@ dont forget :
 # Ohmigo settings
 
 ## Setup
-Ohmigo runs modified Tasmota. You'll have to connect it to wifi and setup mqtt communication.
+Ohmigo runs modified Tasmota. You'll have to connect it to WIFI and setup MQTT communication.
 
 ![image](https://github.com/user-attachments/assets/0755d749-7435-493b-88fa-2c3bef413303)
 
@@ -98,9 +98,9 @@ Ohmiigo will be set on "Operating mode : Resistance"
 
 ![image](https://github.com/user-attachments/assets/d90d98fa-1a35-4eb6-8aa6-62f118187cc0)
 
-*NOTE : Ohmigo can be set in "temperature" mode and use hardwired models of temperature sensors. Adapt to your case*
+*NOTE : Ohmigo can also be set in "temperature" mode and use hardwired models of temperature sensors. this case is not covered by this method. Adapt to your case*
 
-once setup, you'il be able to see it in HA : 
+Once setup, you'il be able to see it in HA : 
 
 ![image](https://github.com/user-attachments/assets/49bb2e49-f27e-4d16-ac03-8fdafc0239ba)
 
