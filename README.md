@@ -54,8 +54,9 @@ The main objective is to replace WTS by a controlled input value issuing from th
 
 As a gift, the Ohmigo control will allow us to relay external temperature sensor (ETS) to the stove and add some corrections (ETC +/- x°C) to simulate variations in the target temperature and so allow great flexibility on the stove scheduling.
 
--  set STT = 21°C
--  if ETS >= 20°C ohmigo temperature sensor will generate a value OTS = (ETS + ETC) and ETC = 1°C => OTS = 21°C >= STT => extinction at 20°C instead of 21°C 
+For example :
+-  on the stove we set STT = 21°C as a basis
+-  if ETS >= 20°C ohmigo will generate a fake temperature including the desired correction OTI = (ETS + ETC) with, for example, ETC = 1°C. So we will have OTI = 21°C >= STT. Shis will lead to control over extinction at 20°C instead of 21°C of the STT 
 
 
 
