@@ -567,3 +567,10 @@ with only the ohmigo and some lightweight automations we got simple but full con
 - Putting the thermostat to OFF will extinct the stove
 - Putting the thermostat so "HEAT" will send corrected temperatures through the ohmigo to delude the stove adjusting its ingition / extinction to RTT instead of STT
 - Stove will ignite using RTT and its own hysteresis
+
+# Whats Next ?
+
+-  Adde fallback to the external temperature Sensor (ETS) using combined multiple sensors
+-  include generic climate thermostat inside a PID-style thermostat like [versatile Thermostat](https://github.com/jmcollin78/versatile_thermostat) for better regulation
+-  make notificatons with ULANZI TC001 to have external output of the thermostat settings
+
