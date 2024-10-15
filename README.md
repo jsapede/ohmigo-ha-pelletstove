@@ -109,9 +109,9 @@ and with MQTTExplorer :
 ![image](https://github.com/user-attachments/assets/39b4a976-554f-4f2c-baaa-b59fc6ddb2bf)
 
 ## Control
-Ohmigo can be manually controlled via the input number on the mqtt integration and throuh the input entity created by the mqtt connection
+Ohmigo can be manually controlled via the input number on the MQTT integration and throuh the input entity created by the MQTT connection
 
-**However, for the rest of this tutorial, we will directly use mqtt commands**
+**However, for the rest of this tutorial, we will directly use MQTT commands**
 
 refering to the MQTTExplorer screenshot above, sending new resistance values to the ohmigo (ORI) to delude the stove will be done using the MQTT topic : **aha/18fe34ed492b/oowifi_resistance/cmd_t**
 
@@ -123,13 +123,13 @@ Once the ohmigo is conneced and included in HA, we need to calibrate it to match
 
 1. Ohmigo is set in "resistance mode"
 2. input a resistance value in the MQTT UI and see how the stove convert it to temperature value
-3. repeat the process over a large temperature scale
+3. repeat the process over a large temperature range
 
 ![image](https://github.com/user-attachments/assets/6cd6eb96-2fbc-4df2-883e-dad5ba858cf4)
 
-*NOTE : on my stove, only integer values of temperature are reported by the digital input/output. I slowly increment/decrement resistor value until a stable temperature level is reached and then take it as reference*
+*NOTE : on my stove, only integer values of temperature are reported by the digital input/output. I slowly increment/decrement resistance value until a stable temperature level is reached and then take it as reference*.
 
-Once temperature / resistance couples are set on a sufficient temperature range (0-50°C), build an interpolation using linear regression (using excel trend curves for example) :
+Once temperature / resistance couples are set on a sufficient temperature range (0-50°C), build a function ORI = f(OTI) using linear regression (using excel trend curves for example) :
 
 R<sub>ohm</sub> = f (T<sub>°C</sub>) = a * T<sup>2</sup> + b * T + c
 
@@ -153,7 +153,7 @@ Now, we then have a simple mathematical model to inject the correct resistance (
 
 # Pellet stove settings
 
-We have to setyp the stove in a state where he will listen to his sensor to ignite / heat / extinct.
+We have to setup the stove in a state where he will listen to his sensor to ignite / heat / extinct.
 
 I put the pellet stove in **"Programmed Mode"** over an extended range of hours in a day, and with a fixed target temperature (STT = 21°C) witch will allow : 
 - to have a hardware fallback for extinct during the night
@@ -165,11 +165,11 @@ For example : set a time based schedule from 5:00 to 23:00 with a target (STT) a
 
 -  at 5:00 the stove will start to listen to the wired sensor
 -  at 23:00 the stove will stop ignition and stop to listen to the wired sensor
--  between 5:00 and 23:00 when OTS < (STT + SHY) = 20°C, stove will autoignite until reaching OTS >= STT (21°C) and then will autoextinct
+-  between 5:00 and 23:00 when OTS <= (STT + SHY) = 20°C, stove will autoignite until reaching OTS >= STT (21°C) and then will autoextinct
 
 **With this mode, the stove will keep the control on the ignition sequences according to its own hysteresis (SHY), so yu will have to adapt STT and SHY according to your case**
 
-**It's possible to gat full control of the stove igntion sequence by injecting start / stop orders to the stove. Climate thermostat created below will have to be adjusted**
+**It's possible to get full control of the stove igntion sequence by injecting start / stop orders to the stove. Climate thermostat created below will have to be adjusted**
 
 
 # Homeassistant
@@ -195,7 +195,7 @@ in my case value is set at 21°C according to the stove STT. if we decide to cha
 
 ### temperature correction offset
 
-for "on the fly" changing the target temperature we need to implement a correction offset on the external temperature sensor (we earlier named ETC) in the form of a "input number" helper :
+for "on the fly" changing the target temperature target we need to implement a correction offset on the external temperature sensor (we earlier named ETC) in the form of a "input number" helper :
 
 Entity is set at : `input_number.etc`
 
@@ -214,7 +214,7 @@ so each time we will change the target temperature on the climate, we will have 
 
 ### fake startup switch / stratup boolean (for future use)
 
-to build correctly a climate template from the UI and be able to correct its target temperazutres from the UI we need to have a switch that mimick ignite/extinct the stove.
+to build correctly a climate template from the UI and be able to correct the Real Target Temperautre (RTT) from the UI we need to have a switch that mimmick ignite/extinct of the stove.
 
 In reality we only want that the stove regulates itself ignition/extinction so we create a "virtual ignition binary" 
 
@@ -237,7 +237,7 @@ switch:
             entity_id: input_boolean.virtual_stove_ignition
 ```
 
-this fake ignition switch, only change the state of a virtual input boolean : `input_boolean.virtual_stove_ignition` witch has no impact a this time.
+This fake ignition switch, only change the state of a virtual input boolean : `input_boolean.virtual_stove_ignition` witch has no impact a this time.
 
 *NB : for future use it wille be possible to add extra automation to force ignit/extinction from this virtual input boolean*
 
@@ -303,7 +303,7 @@ description: ""
 
 ### Target temperature correction script
 
-everytime the climate temperature settings change we will have to adapt the temperature correction (ETC), so we create a light script thaw will be called by automation
+Everytime the climate temperature settings (RTT) change we will have to adapt the temperature correction (ETC), so we create a light script thaw will be called by automation
 
 ```
 action: input_number.set_value
@@ -317,13 +317,13 @@ target:
 ```
 
 ### ohmigo resistance update script
-we use the mathematical model we built during calibration and introduce an offset correction to manipulate the real target temperature of the stove and convert OTS to ORS (resistance in milliohms)
+We use the mathematical model we built during calibration and introduce an offset correction to manipulate the real target temperature of the stove and convert OTI to ORI (resistance in milliohms)
 
 so in my case it will be : **ORI = ((0.0179 * OTI<sup>2</sup>) + (6.9597 * OTI) + 813.1) * 1000**
 
 with OTI = `sensor.ets + input_number.etc`
 
-*NB : as the ohmigo only accepts integer values on the mqtt command, we need to multiply by 1000 and round(0) before sending the value*
+*NB : as the ohmigo only accepts integer values in millihoms on the mqtt command, we need to multiply by 1000 and round(0) before sending the value*
 
 ```
 alias: update resistance ohmigo
@@ -347,7 +347,7 @@ description: ""
 
 ### update Ohigo resistance (ORI) 
 
-here we update the Ohmigo resistance value (ORI) each time the external temperature sensor (ETS) value changes :
+Here we update the Ohmigo resistance value (ORI) each time the external temperature sensor (ETS) value changes :
 
 ```
 alias: update ohmigo resistance
@@ -369,10 +369,10 @@ mode: single
 
 ### Coupling stove extinction with thermostat 
 
-here we establisg coupling between thermostate settings and the stove control :
+Here we establish coupling between thermostate settings and the stove control :
 
 - When Thermostat is set to OFF : Set OTI to 45°C to force stove stop + deactivate ORI update to avoid restarts + stop the scheduler
-- when thermostat is send to "HEAT" :  activate ORI update + force ORI update
+- when thermostat is send to "HEAT" :  activate ORI update + force ORI update according to RTT set on the thermostat
 
 ```
 alias: Gestion Thermostat Poele
@@ -434,9 +434,9 @@ mode: single
 
 ## Update Temperature correction (ETC)
 
-here we adjust the temperature correction each time the real temperature target (RTT) is set on the thermostat **in heating mode**
+Here we adjust the temperature correction each time the real temperature target (RTT) is set on the thermostat **in heating mode**
 
-when the thermostat is in "OFF" Mode, ETC update is bypassed to avoid unwanted ignitions
+when the thermostat is in "OFF" Mode, RTT/ETC update is bypassed to avoid unwanted ignitions
 
 
 ```
@@ -472,7 +472,7 @@ mode: single
 
 This automation is not necessary but given as example.
 
-the dry contact switch entity is : `input_boolean.etat_ohmigo`
+The dry contact switch entity is : `input_boolean.etat_ohmigo`
 
 ```
 alias: fallback sonde poele
