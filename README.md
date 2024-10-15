@@ -33,7 +33,7 @@ The main equipement needed is a Ohmigo "[Ohm on Wifi](https://www.ohmigo.io/en/p
 
 A deported wireless zigbee / bluettooth temperature sensor (i use [xiaomi bluetooth](https://fr.aliexpress.com/item/1005006750142144.html) [converted to zigbee](https://smarthomescene.com/guides/convert-xiaomi-lywsd03mmc-from-bluetooth-to-zigbee/)) will act as the External Temperature Sensor (ETS)
 
-To create a fallaback on the wired sthermal sensor, we also use a simple [zigbee dry-contact with a NC/NO wiring](https://fr.aliexpress.com/item/1005005800957363.html). In some cases we will want to go back to the original wired sensor.
+To create a fallaback on the wired thermal sensor, we also use a simple [zigbee dry-contact with a NC/NO wiring](https://fr.aliexpress.com/item/1005005800957363.html). In some cases we will want to go back to the original wired sensor.
 
 Some additionnal WAGO connectors, 5V USB power supply, wires, and electrician pliers are needed to build and the whole system.
 
