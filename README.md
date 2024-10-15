@@ -301,6 +301,19 @@ description: ""
 
 ### Target temperature correction script
 
+everytime the climate temperature settings change we will have to adapt the temperature correction (ETC), so we create a light script thaw will be called by automation
+
+```
+action: input_number.set_value
+metadata: {}
+data:
+  value: >-
+    {{ (states('input_number.stt') | float -
+    state_attr('climate.stove', 'temperature') | float) | round(1)  }}
+target:
+  entity_id: input_number.etc
+```
+
 ### ohmigo resistance update script
 we use the mathematical model we built during calibration and introduce an offset correction to manipulate the real target temperature of the stove and convert OTS to ORS (resistance in milliohms)
 
