@@ -58,6 +58,8 @@ For example :
 -  on the stove we set STT = 21°C as a basis
 -  if ETS >= 20°C ohmigo will generate a fake temperature including the desired correction OTI = (ETS + ETC) with, for example, ETC = 1°C. So we will have OTI = 21°C >= STT. Shis will lead to control over extinction at 20°C instead of 21°C of the STT 
 
+![image](https://github.com/user-attachments/assets/d0bda2c6-aef3-433a-8696-2a9d4fa516ec)
+
 
 # Wiring scheme
 On my stove the sensor is wired on 39 and 40 connectors :
