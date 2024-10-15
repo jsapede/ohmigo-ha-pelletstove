@@ -319,10 +319,10 @@ sequence:
       retain: false
       topic: aha/18fe34ed492b/oowifi_resistance/cmd_t
       payload: >-
-        {{ ((0.0173 * (((states('sensor.capteur_salle_a_manger_temperature') |
-        float) + (states('input_number.correction_sonde_poele') | float) )**2) +
-        6.9597 * ((states('sensor.capteur_salle_a_manger_temperature') | float)
-        + (states('input_number.correction_sonde_poele') | float) )+ 813.1)
+        {{ ((0.0173 * (((states('sensor.ets') |
+        float) + (states('input_number.etc') | float) )**2) +
+        6.9597 * ((states('sensor.ets') | float)
+        + (states('input_number.etc') | float) )+ 813.1)
         *1000) | round(0) }}
       evaluate_payload: false
 description: ""
