@@ -133,13 +133,20 @@ R<sub>ohm</sub> = f (T<sub>°C</sub>) = a * T<sup>2</sup> + b * T + c
 
 with a,b,c constants.
 
+**IN MY CASE** i have :
+- a = 0.0173
+- b = 6.9597
+- c * 813.1
+
+*NOTE : i used quadratic equation as it gives perfect consistency (R<sup>2</sup>)=1). You have to adapt to your case*
+
 ![image](https://github.com/user-attachments/assets/4cf182bc-dc41-41c5-a43f-b2fb4b4336b1)
 
-we then have a simple mathematical model to inject the correct resistance (ORS) value in the wired sensor according to the temperature we want to send (OTS).
+Now, we then have a simple mathematical model to inject the correct resistance (ORI) value in the wired sensor according to the temperature we want to send (OTI).
 
-**IN MY CASE** converting the model to give milliohms to Ohmigo will lead to : ORS = ((0.0179 * OTS<sup>2</sup>) + (6.9597 * OTS) + 813.1) * 1000
+**IN MY CASE converting the model to give milliohms** to Ohmigo will lead to : ORI = ((0.0179 * OTI<sup>2</sup>) + (6.9597 * OTI) + 813.1) * 1000
 
-**YOU WILL HAVE TO ADAPT YOUR FORMULA ACCORDING TO THE RESULTS OF YOUR CALIBRATION**
+**YOU WILL HAVE TO ADAPT YOUR FORMULA AND PARAMETERS ACCORDING TO THE RESULTS OF YOUR CALIBRATION**
 
 
 # Pellet stove settings
