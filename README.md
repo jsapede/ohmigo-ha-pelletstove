@@ -148,7 +148,7 @@ with a,b,c constants.
 
 Now, we then have a simple mathematical model to inject the correct resistance (ORI) value in the wired sensor according to the temperature we want to send (OTI).
 
-**IN MY CASE converting the model to give milliohms** to Ohmigo will lead to : ORI = ((0.0179 * OTI<sup>2</sup>) + (6.9597 * OTI) + 813.1) * 1000
+**IN MY CASE converting the model to give milliohms** to Ohmigo will lead to : ORI = ((0.0173 * OTI<sup>2</sup>) + (6.9597 * OTI) + 813.1) * 1000
 
 **YOU WILL HAVE TO ADAPT YOUR FORMULA AND PARAMETERS ACCORDING TO THE RESULTS OF YOUR CALIBRATION**
 
@@ -321,7 +321,7 @@ target:
 ### ohmigo resistance update script
 We use the mathematical model we built during calibration and introduce an offset correction to manipulate the real target temperature of the stove and convert OTI to ORI (resistance in milliohms)
 
-so in my case it will be : **ORI = ((0.0179 * OTI<sup>2</sup>) + (6.9597 * OTI) + 813.1) * 1000**
+so in my case it will be : **ORI = ((0.0173 * OTI<sup>2</sup>) + (6.9597 * OTI) + 813.1) * 1000**
 
 with OTI = `sensor.ets + input_number.etc`
 
