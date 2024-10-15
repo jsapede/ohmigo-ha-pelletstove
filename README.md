@@ -1,46 +1,40 @@
 # ohmigo-ha-pelletstove
 automate pellet stove using ohmigo and **homeassistant**
 
-This repository aims to describe method to implement automation and Homeassistant inclusion of **a pellet stove that has neither native wifi connection, nor dry contact command entrypoint**, but a wired temperature sensor.
+This repository aims to describe method to implement automation and Homeassistant inclusion of **a pellet stove that neither has native wifi connection, nor dry contact command entrypoint**, but a only Wired Temperature Sensor.
 
 # Glossary :
 
 - ETC : **E**xternal **T**emperature **C**orrection (°C)
 - ETS : **E**xternal **T**emperature **S**ensor (°C)
-- OTS : **O**hmigo **T**emperature **S**ensor (°C)
-- OTR : **O**hmigo **R**esistance **S**ensor (milliOhms)
+- OTI : **O**hmigo **T**emperature **Input** (°C)
+- OTI : **O**hmigo **R**esistance **Input** (milliOhms)
 - RTT : **R**eal **T**arget **T**emperature (°C)
 - SHY : **S**tove (cold) **HY**steresis (°C)
 - STT : **S**tove **T**arget **T**emperature (°C)
 - WTS : **W**ired **T**emperature **S**ensor (°C)
 
 # Problem description
-My pellet stove has only a simple temperature regulation using a target temperature (STT) and a cold hysteresis (SHY witch in my case is set a -1°C). 
+My pellet stove has only a simple temperature regulation based on a Stove Target Temperature (STT) and a Stove cold HYsteresis (SHY witch in my case is set a -1°C). 
 
-i.e. when target temperature (STT) is set at 21°C, ignition will start when 20°C is sensed on the wired sensor and will extinct as soon as the target temperature STT is reached (21°C). And so on ... alternating starts and stops :
+When STT is set at 21°C, ignition will start when the WTS senses 20°C and will extinct as soon as WTS senses temperature over STT (21°C) ... and so on ... alternating starts and stops.
 
-- when WTS =< (STT + SHY) => ignition
-- when (STT + SHY) < WTS < STT => heating
-- when WTS >= STT => extinction
+- when WTS =< (STT + SHY) : ignition
+- when (STT + SHY) < WTS < STT : heating
+- when WTS >= STT : extinction
 
 My pellet stove has only three settings : 
 1. forced heat : the previous described cycle will infinitely run
 2. Programmated heat : the previous cycle is infinitely run over a time defined programmation (i.e. hour of start / hour fo end / target temperature)
 3. Stop : no heating at all
 
-the main problem is that the pellet stove digital input **allows only 3 time/temperature-based schedules** within a day.
-
-Moreover, my stove has no way to put a wired/wireless command that could be included in homeassistant, neither an external command through dry contact that also coud be driven by homeassistant.
-
-And finally the digital input/output of the stove has only 1°C precision wutch is sometimes limiting.
-
 # Material
 
-The main equipement needed is a Ohmigo "[Ohm on Wifi](https://www.ohmigo.io/en/product-page/ohmigo-ohm-on-wifi)" witch has a specific firmware version including Homeassistant communication by mqtt. The ohmigo generates a resistive value according to a resistance setting in its UI.
+The main equipement needed is a Ohmigo "[Ohm on Wifi](https://www.ohmigo.io/en/product-page/ohmigo-ohm-on-wifi)" witch has a specific firmware version including Homeassistant communication by mqtt. The ohmigo generates a resistive value according to a resistance setting in its UI. Ohmigo will replace the WTS.
+
+A deported wireless zigbee / bluettooth temperature sensor (i use [xiaomi bluetooth](https://fr.aliexpress.com/item/1005006750142144.html) [converted to zigbee](https://smarthomescene.com/guides/convert-xiaomi-lywsd03mmc-from-bluetooth-to-zigbee/)) will act as the External Temperature Sensor (ETS)
 
 To create a fallaback on the wired sthermal sensor, we also use a simple [zigbee dry-contact with a NC/NO wiring](https://fr.aliexpress.com/item/1005005800957363.html). In some cas we will want to go back to the original wired sensor.
-
-A deported wireless zigbee / bluettooth temperature sensor (i use [xiaomi bluetooth](https://fr.aliexpress.com/item/1005006750142144.html) [converted to zigbee](https://smarthomescene.com/guides/convert-xiaomi-lywsd03mmc-from-bluetooth-to-zigbee/)).
 
 Some additionnal WAGO connectors, 5V USB power supply, wires, and electrician pliers are needed to build and the whole system.
 
