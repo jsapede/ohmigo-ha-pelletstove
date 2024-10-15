@@ -104,7 +104,7 @@ once setup, you'il be able to see it in HA :
 
 and with MQTTExplorer : 
 
-![image](https://github.com/user-attachments/assets/9e78f745-6933-498e-9321-ebee3288dcc8)
+![image](https://github.com/user-attachments/assets/39b4a976-554f-4f2c-baaa-b59fc6ddb2bf)
 
 ## Control
 Ohmigo can be manually controlled via the input number on the mqtt integration and throuh the input entity created by the mqtt connection
@@ -117,17 +117,17 @@ refering to the MQTTExplorer screenshot above, sending new resistance values to 
 
 # Calibration
 
-once the ohmigo is conneced and included in HA, we need to calibrate it to match with the original wired sensor. 
+Once the ohmigo is conneced and included in HA, we need to calibrate it to match with the original wired sensor : 
 
-1. Put ohmigo in "resistance mode"
-2. inject a resistance value and see how the stove convert it to temperature
-3. repeat the process
+1. Ohmigo is set in "resistance mode"
+2. input a resistance value in the MQTT UI and see how the stove convert it to temperature value
+3. repeat the process over a large temperature scale
 
 ![image](https://github.com/user-attachments/assets/6cd6eb96-2fbc-4df2-883e-dad5ba858cf4)
 
-*NOTE : on my stove, only integer values of temperature are reported by the digital input/output. the correct way is to slowly increment/decrement resistor values until a stable temperature level is reached*
+*NOTE : on my stove, only integer values of temperature are reported by the digital input/output. I slowly increment/decrement resistor value until a stable temperature level is reached and then take it as reference*
 
-once temperature / resistance couples are set on a sufficient temperature range (0-50°C), build an interpolation using linear regression (using excel trend curves for example) :
+Once temperature / resistance couples are set on a sufficient temperature range (0-50°C), build an interpolation using linear regression (using excel trend curves for example) :
 
 R<sub>ohm</sub> = f (T<sub>°C</sub>) = a * T<sup>2</sup> + b * T + c
 
