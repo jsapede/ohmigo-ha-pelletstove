@@ -7,7 +7,7 @@ This repository aims to describe method to implement automation and Homeassistan
 - ETC : **E**xternal **T**emperature **C**orrection (°C)
 - ETS : **E**xternal **T**emperature **S**ensor (°C)
 - OTI : **O**hmigo **T**emperature **Input** (°C)
-- OTI : **O**hmigo **R**esistance **Input** (milliOhms)
+- ORI : **O**hmigo **R**esistance **Input** (milliOhms)
 - RTT : **R**eal **T**arget **T**emperature (°C)
 - SHY : **S**tove (cold) **HY**steresis (°C)
 - STT : **S**tove **T**arget **T**emperature (°C)
