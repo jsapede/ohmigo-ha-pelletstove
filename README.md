@@ -165,13 +165,13 @@ I put the pellet stove in **"Programmed Mode"** over an extended range of hours 
 
 For example : set a time based schedule from 5:00 to 23:00 with a target (STT) at 21°C + cold hysteresis (SHY) at (-1°C)
 
--  at 5:00 the stove will start to listen to the wired sensor
--  at 23:00 the stove will stop ignition and stop to listen to the wired sensor
--  between 5:00 and 23:00 when OTS <= (STT + SHY) = 20°C, stove will autoignite until reaching OTS >= STT (21°C) and then will autoextinct
+-  at 5:00 the stove will start to listen to the sensor
+-  at 23:00 the stove will stop ignition and stop to listen to the sensor
+-  between 5:00 and 23:00 when OTI <= (STT + SHY) = 20°C, stove will autoignite until reaching OTI >= STT (21°C) and then will autoextinct
 
 **With this mode, the stove will keep the control on the ignition sequences according to its own hysteresis (SHY), so yu will have to adapt STT and SHY according to your case**
 
-**It's possible to get full control of the stove igntion sequence by injecting start / stop orders to the stove. Climate thermostat created below will have to be adjusted**
+**It's possible to get full control of the stove igntion sequence by injecting start (5°C) / stop (45°C) orders to the stove instead of letting him start / stop accoring to the ORI sent. Climate thermostat created below will have to be adjusted**
 
 
 # Homeassistant
