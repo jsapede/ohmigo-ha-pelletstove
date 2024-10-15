@@ -434,7 +434,7 @@ mode: single
 
 ## Update Temperature correction (ETC)
 
-here we adjust the temperature correction each time the temperature target is set on the thermostat **in heating mode**
+here we adjust the temperature correction each time the real temperature target (RTT) is set on the thermostat **in heating mode**
 
 when the thermostat is in "OFF" Mode, ETC update is bypassed to avoid unwanted ignitions
 
