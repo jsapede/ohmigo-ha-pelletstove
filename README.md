@@ -524,7 +524,7 @@ mode: single
 
 ## Lovelace Card
 
-I use [Simple Thermostat](https://github.com/nervetattoo/simple-thermostat]
+I use [Simple Thermostat](https://github.com/nervetattoo/simple-thermostat)
 
 ![image](https://github.com/user-attachments/assets/ac55c503-f239-46b1-a161-76e624816e5c)
 
@@ -560,4 +560,8 @@ and couple it with a scheduler :
 
 # Conclusion 
 
-with only the ohmigo and some lightweight automations we got simple but full control over the stove
+with only the ohmigo and some lightweight automations we got simple but full control over the stove.
+
+- Putting the thermostat to OFF will extinct the stove
+- Putting the thermostat so "HEAT" will send corrected temperatures through the ohmigo to delude the stove adjusting its ingition / extinction to RTT instead of STT
+- Stove will ignite using RTT and its own hysteresis
