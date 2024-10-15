@@ -343,7 +343,7 @@ description: ""
 
 ## Automations
 
-### update ORI 
+### update Ohigo resistance (ORI) 
 
 here we update the Ohmigo resistance value (ORI) each time the external temperature sensor (ETS) value changes :
 
@@ -522,5 +522,40 @@ mode: single
 
 ## Lovelace Card
 
+I use [Simple Thermostat](https://github.com/nervetattoo/simple-thermostat]
+
+![image](https://github.com/user-attachments/assets/ac55c503-f239-46b1-a161-76e624816e5c)
+
+```
+type: vertical-stack
+cards:
+  - type: custom:simple-thermostat
+    entity: climate.stove
+    layout:
+      mode:
+        headings: false
+        icons: true
+    header:
+      icon: mdi:fireplace
+      toggle:
+        entity: switch.schedule_temperature_calendar
+        name: Mode AUTO
+    hide:
+      state: true
+    control:
+      hvac:
+        name: true
+        icon: true
+      preset:
+        icon: true
+        name: true
+```
+
+and couple it with a scheduler : 
+
+![image](https://github.com/user-attachments/assets/a37a32af-e2fa-41aa-98d6-a4d8c4f80261)
 
 
+# Conclusion 
+
+with only the ohmigo and some lightweight automations we got simple but full control over the stove
