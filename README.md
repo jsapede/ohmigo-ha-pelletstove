@@ -1,7 +1,7 @@
 # ohmigo-ha-pelletstove
 automate pellet stove using ohmigo and **homeassistant**
 
-This repository aims to describe method to implement automation and Homeassistant inclusion of **a pellet stove that neither has native wifi connection, nor dry contact command entrypoint**, but a only Wired Temperature Sensor.
+This repository aims to describe method to implement automation and Homeassistant inclusion of **a pellet stove that neither has native wifi connection, nor dry contact command entrypoint**, but a only Wired Temperature Input (WTI).
 
 # Glossary :
 
@@ -12,16 +12,16 @@ This repository aims to describe method to implement automation and Homeassistan
 - RTT : **R**eal **T**arget **T**emperature (°C)
 - SHY : **S**tove (cold) **HY**steresis (°C)
 - STT : **S**tove **T**arget **T**emperature (°C)
-- WTS : **W**ired **T**emperature **S**ensor (°C)
+- WTI : **W**ired **T**emperature **I**nput (°C)
 
 # Problem description
 My pellet stove has only a simple temperature regulation based on a Stove Target Temperature (STT) and a Stove cold HYsteresis (SHY witch in my case is set a -1°C). 
 
-When STT is set at 21°C, ignition will start when the WTS senses 20°C and will extinct as soon as WTS senses temperature over STT (21°C) ... and so on ... alternating starts and stops.
+When STT is set at 21°C, ignition will start when the WTI sends 20°C and will extinct as soon as WTI sends temperature over STT (21°C) ... and so on ... alternating starts and stops.
 
-- when WTS =< (STT + SHY) : ignition
-- when (STT + SHY) < WTS < STT : heating
-- when WTS >= STT : extinction
+- when WTI =< (STT + SHY) : ignition
+- when (STT + SHY) < WTI < STT : heating
+- when WTI >= STT : extinction
 
 My pellet stove has only three settings : 
 1. forced heat : the previous described cycle will infinitely run
@@ -30,7 +30,7 @@ My pellet stove has only three settings :
 
 # Material
 
-The main equipement needed is a Ohmigo "[Ohm on Wifi](https://www.ohmigo.io/en/product-page/ohmigo-ohm-on-wifi)" witch has a specific firmware version including Homeassistant communication by mqtt. The ohmigo generates a resistive value according to a resistance setting in its UI. Ohmigo will replace the WTS.
+The main equipement needed is a Ohmigo "[Ohm on Wifi](https://www.ohmigo.io/en/product-page/ohmigo-ohm-on-wifi)" witch has a specific firmware version including Homeassistant communication by mqtt. The ohmigo generates a resistive value according to a resistance setting in its UI. Ohmigo will replace the WTI.
 
 A deported wireless zigbee / bluettooth temperature sensor (i use [xiaomi bluetooth](https://fr.aliexpress.com/item/1005006750142144.html) [converted to zigbee](https://smarthomescene.com/guides/convert-xiaomi-lywsd03mmc-from-bluetooth-to-zigbee/)) will act as the External Temperature Sensor (ETS)
 
@@ -39,16 +39,20 @@ To create a fallaback on the wired sthermal sensor, we also use a simple [zigbee
 Some additionnal WAGO connectors, 5V USB power supply, wires, and electrician pliers are needed to build and the whole system.
 
 #  Method
-As there's no other way to communicate with the pellet stove except reverse engineering the electronics, the key idea is to send controled resistance values to the wired sensor throuh the ohmigo.
+As there's no other way to communicate with the pellet stove except reverse engineering the electronics, the key idea is to delude the stove with fake temperarature inputs (OTI) send by variating the resistance of the Ohmigo to send send controled resistance inputs (ORI) to the stove
 
-So said, sending a low resistance value will simulate low temperature (< target + hysteresis) and force the stove to ignite, and sending a high resistance value will simulate high temperature (> target) and the stove will extinct :
+So said, sending a low resistance value will simulate low temperature (< target + hysteresis) and force the stove to ignite, and sending a high resistance value will simulate high temperature (> target) and the stove will extinct.
 
-*NOTE : from here, as WTS will be replaced by the ohmigo, we will use OTS as the main temperature sensor*
+The main objective is to replace WTS by a controlled input value issuing from the ohmigo (ORI).
 
-- if OTS = 5°C << (STT + SHY) => ignition
-- if OTS = 45°C >> STT => extinction
+*NOTE : as we will replace the WTI by the ohmuigo, from here we will use OTI as the main temperature input for the stove*
 
-As a gift, sending corrections (ETC +/- x°C) in addition to en external temperature sensor (ETS) will allow to simulate variations in the target temperature and so allow much more than 3 time-based schedules :
+- if OTI = 5°C << (STT + SHY) : ignition
+- if OTI = 45°C >> STT : extinction
+
+*NOTE : you'll have to adapt thoses limits to your case*
+
+As a gift, the Ohmigo control will allow us to relay external temperature sensor (ETS) to the stove and add some corrections (ETC +/- x°C) to simulate variations in the target temperature and so allow great flexibility on the stove scheduling.
 
 -  set STT = 21°C
 -  if ETS >= 20°C ohmigo temperature sensor will generate a value OTS = (ETS + ETC) and ETC = 1°C => OTS = 21°C >= STT => extinction at 20°C instead of 21°C 
