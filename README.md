@@ -138,7 +138,7 @@ with a,b,c constants.
 - b = 6.9597
 - c * 813.1
 
-*NOTE : i used quadratic equation as it gives perfect consistency (R<sup>2</sup>)=1). You have to adapt to your case*
+*NOTE : i used quadratic equation as it gives perfect consistency (R<sup>2</sup>=1). You have to adapt to your case*
 
 ![image](https://github.com/user-attachments/assets/4cf182bc-dc41-41c5-a43f-b2fb4b4336b1)
 
@@ -151,18 +151,23 @@ Now, we then have a simple mathematical model to inject the correct resistance (
 
 # Pellet stove settings
 
-The pellet stove is maintained in **"Programmed Mode"** over an extended range of hours in a day, and with a fixed target temperature (21°C) witch will allow : 
-- to have a hardware fallback for turning off the heating during the night
-- to have a temperature fallbac in case of ohmigo defaillance, reverting to the wired sensor
-- to set up a target temperature offset witch will allow to have a control on the real target temperature
-- to allow start / stop control using extreme resistor values injected in the sensor
+We have to setyp the stove in a state where he will listen to his sensor to ignite / heat / extinct.
 
+I put the pellet stove in **"Programmed Mode"** over an extended range of hours in a day, and with a fixed target temperature (STT = 21°C) witch will allow : 
+- to have a hardware fallback for extinct during the night
+- to have a target temperature fallback in case of ohmigo defaillance, reverting to the wired sensor
+- to set up a target temperature correction witch will allow to have a control on the real target temperature
+- to allow start / stop control using extreme resistor values injected in the sensor
 
 For example : set a time based schedule from 5:00 to 23:00 with a target (STT) at 21°C + cold hysteresis (SHY) at (-1°C)
 
 -  at 5:00 the stove will start to listen to the wired sensor
 -  at 23:00 the stove will stop ignition and stop to listen to the wired sensor
 -  between 5:00 and 23:00 when OTS < (STT + SHY) = 20°C, stove will autoignite until reaching OTS >= STT (21°C) and then will autoextinct
+
+**With this mode, the stove will keep the control on the ignition sequences according to its own hysteresis (SHY), so yu will have to adapt STT and SHY according to your case**
+
+**It's possible to gat full control of the stove igntion sequence by injecting start / stop orders to the stove. Climate thermostat created below will have to be adjusted**
 
 
 # Homeassistant
@@ -171,70 +176,95 @@ The basics will be to construct a climate template to control the stove, and add
 
 ## Sensors
 
-the external temperature sensor (ETS) entity is : `sensor.capteur_salle_a_manger_temperature`
+the external temperature sensor (ETS) issues from the xiaomi MQTT connection.
+
+Entity is set at : `sensor.ets`
 
 
 ## Helpers
 
 ### Target temperature of the stove
 
-to facilitate modifications we introduce in HA an input number that is equalt to the STT target temperature of the stove (i.e. 21°C in our example) : 
+to facilitate modifications we introduce in HA an input number that is equalt to the STT target temperature of the stove (i.e. 21°C in our example).
 
-so if we decide to change the basic setting of the stove we only have this value to change manually for everything continue to works normally.
+Entity is set at : `intput_number.stt`
+
+in my case value is set at 21°C according to the stove STT. if we decide to change the basic setting of the stove we only have this value to change manually for everything continue to works normally.
 
 ### temperature correction offset
 
-for "on the fly" changing the target temperature we need to implement a correction offset on the room temperature sensor (we earlier named WTC) in the form of a "input number" helper : `input_number.correction_sonde_poele`
+for "on the fly" changing the target temperature we need to implement a correction offset on the external temperature sensor (we earlier named ETC) in the form of a "input number" helper :
+
+Entity is set at : `input_number.etc`
 
 For example : 
 
 as said, the stove is working with its own target temperature we set a 21°C : 
 
-if we want a lower real target temperzature (RTT) we have to tell sthe stove that it reaches its own target earlier, so if we want 20°C instead of 21°C we have to increase the value of the temperature sensor `sensor.capteur_salle_a_manger_temperature` with an offset `input_number.correction_sonde_poele`witch is set at the difference between the stove target temperature (21°C) and our real own target temperature (20°C) :
+if we want a lower real target temperature (RTT) we have to tell sthe stove that it reaches its own target earlier, so if we want 20°C instead of 21°C we have to increase the value of the temperature sensor `sensor.ETS` with an offset `input_number.ETC` witch is set at the difference between the stove target temperature (21°C) and our real own target temperature (20°C) :
 
-`input_number.correction_sonde_poele` = (STT - RTT) = 21°C - 20°C = 1°C
+`input_number.ETC` = (STT - RTT) = (21°C - 20°C) = 1°C
 
-ohmigo Temperature value will be OTS = `sensor.capteur_salle_a_manger_temperature` + `input_number.correction_sonde_poele`
+ohmigo Temperature value will be OTI = `sensor.ETS` + `input_number.ETC`
 
 so each time we will change the target temperature on the climate, we will have to change this offset. this is done with an automation and a script described later in ths document.
 
 
 ### fake startup switch / stratup boolean (for future use)
 
-to build correctly a climate template from the UI and be able to correct its target temperazutres from the UI we need to have a switch that ignite/extinct the stove.
+to build correctly a climate template from the UI and be able to correct its target temperazutres from the UI we need to have a switch that mimick ignite/extinct the stove.
 
-In reality we only want that the stove regulates itself ignition/extinction so we create a "fake ignition switch" 
+In reality we only want that the stove regulates itself ignition/extinction so we create a "virtual ignition binary" 
+
+Entity of this virtual input is set at : `input_boolean.virtual_stove_ignition`
 
 ```
-####################
-# Poele a granulés #
-####################
-
 switch:
-## Demarrage chauffe thermostat poele a granules / activation switch virtuel
   - platform: template
     switches:
-      poele_a_granules_chauffe:
-        unique_id: "switch.poele_a_granules_chauffe"
-        friendly_name: "Poele mode marche CHAUFFE"
-        value_template: "{{ is_state('input_boolean.poele_a_granules_chauffe_virtuel', 'on') }}"
+      stove_ignition:
+        friendly_name: "Pellet Stove Ignition"
+        value_template: "{{ is_state('input_boolean.virtual_stove_ignition', 'on') }}"
         turn_on:
           action: switch.turn_on
           target:
-            entity_id: input_boolean.poele_a_granules_chauffe_virtuel
+            entity_id: input_boolean.virtual_stove_ignition
         turn_off:
           action: switch.turn_off
           target:
-            entity_id: input_boolean.poele_a_granules_chauffe_virtuel
+            entity_id: input_boolean.virtual_stove_ignition
 ```
 
-this fake ignition switch, only change the state of a virtual input boolean : `input_boolean.poele_a_granules_chauffe_virtuel` witch has no impact a this time.
+this fake ignition switch, only change the state of a virtual input boolean : `input_boolean.virtual_stove_ignition` witch has no impact a this time.
 
 *NB : for future use it wille be possible to add extra automation to force ignit/extinction from this virtual input boolean*
 
 
 ### climate template / customize
 
+through the UI we generate a helper with **climate** entity : `climate.stove` 
+
+![image](https://github.com/user-attachments/assets/3a6cd3c1-5ce0-44b9-9a0e-69c0265d88ee)
+
+and set :
+-  Temperature sensor : `sensor.ets`
+-  Switch : `switchs.tove_ignition`
+
+thent we set the temperature preset modes in the UI : 
+
+![image](https://github.com/user-attachments/assets/12a58bf7-3bc9-4027-8e1d-e2c1d7e6740b)
+
+**Precisions and other climate settings aren't available on the UI, so i set them in the configuration.yaml**
+
+```
+
+homeassistant:
+  customize:
+    climate.stove:
+      #initial_hvac_mode: "off"
+      precision: 0.1
+      target_temp_step: 0.5
+```
 
 
 ## Scripts 
