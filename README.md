@@ -59,7 +59,6 @@ For example :
 -  if ETS >= 20°C ohmigo will generate a fake temperature including the desired correction OTI = (ETS + ETC) with, for example, ETC = 1°C. So we will have OTI = 21°C >= STT. Shis will lead to control over extinction at 20°C instead of 21°C of the STT 
 
 
-
 # Wiring scheme
 On my stove the sensor is wired on 39 and 40 connectors :
 
@@ -69,7 +68,7 @@ from the motherboard we assume :
 - Grey wire for the "ground"
 - red wire for the R<sub>ohm</sub>
 
-so, to get a fallback with the wired sensor in case of problem with the ohmigo : 
+so, to wire the ohmigo and keep a fallback with the wired sensor in case of problem : 
 
 - put the red wire of the sensor on the NC connector of the dry contact
 - Put the red wire on "Ohm" of the ohmigo on the NO connector of the dry contact
@@ -84,7 +83,30 @@ dont forget :
 
 ![image](https://github.com/user-attachments/assets/f398bff6-7683-4c5c-beab-5917c57262c1)
 
+*NOTE: Fallaback on the wired sensor in't necessary*
+
 # Ohmigo settings
+
+## Setup
+Ohmigo runs modified Tasmota. You'll have to connect it to wifi and setup mqtt communication.
+
+![image](https://github.com/user-attachments/assets/0755d749-7435-493b-88fa-2c3bef413303)
+
+Ohmiigo will be set on "Operating mode : Resistance"
+
+![image](https://github.com/user-attachments/assets/d90d98fa-1a35-4eb6-8aa6-62f118187cc0)
+
+*NOTE : Ohmigo can be set in "temperature" mode and use hardwired models of temperature sensors. Adapt to your case*
+
+once setup, you'il be able to see it in HA : 
+
+![image](https://github.com/user-attachments/assets/49bb2e49-f27e-4d16-ac03-8fdafc0239ba)
+
+and with MQTTExplorer : 
+
+![image](https://github.com/user-attachments/assets/9e78f745-6933-498e-9321-ebee3288dcc8)
+
+## Control
 
 # Calibration
 
